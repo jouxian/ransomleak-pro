@@ -4,9 +4,9 @@ from __future__ import annotations
 import math
 import re
 import unicodedata
-from typing import Optional
 
-def format_size(size_bytes: Optional[int]) -> str:
+
+def format_size(size_bytes: int | None) -> str:
     if size_bytes is None:
         return "0 B"
 
@@ -35,7 +35,7 @@ def format_size(size_bytes: Optional[int]) -> str:
     return f"{text} {units[exponent]}"
 
 
-def format_eta(seconds: Optional[float]) -> str:
+def format_eta(seconds: float | None) -> str:
     if (
         seconds is None
         or seconds < 0

@@ -1,13 +1,14 @@
 """Archive detection and archive-member risk checks."""
 from __future__ import annotations
 
+import io
 import os
 import re
 import stat
 from pathlib import Path
-from typing import Optional, Union
 
-def magic_to_archive_type(header: bytes) -> Optional[str]:
+
+def magic_to_archive_type(header: bytes) -> str | None:
     if header.startswith(
         (
             b"PK\x03\x04",
@@ -27,7 +28,7 @@ def magic_to_archive_type(header: bytes) -> Optional[str]:
 
 
 def get_magic_header(
-    path: Union[str, os.PathLike],
+    path: str | os.PathLike,
     size: int = 16,
 ) -> bytes:
     try:
@@ -104,7 +105,7 @@ def looks_like_archive(name: str) -> bool:
 def detect_archive_type(
     path: Path,
     aggressive_magic: bool = False,
-) -> Optional[str]:
+) -> str | None:
 
     name = path.name.lower()
 
@@ -142,7 +143,7 @@ def detect_archive_type(
 def archive_member_risk(
     name: str,
     unix_mode: int = 0,
-) -> Optional[str]:
+) -> str | None:
 
     normalized = name.replace("\\", "/")
 

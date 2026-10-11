@@ -5,9 +5,9 @@ import os
 import stat
 import threading
 import time
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional
 
 from .archives import extract_7z_contents, extract_rar_contents, extract_zip_contents
 from .config import (
@@ -45,10 +45,10 @@ class ForensicScanner:
 
     def __init__(
         self,
-        cancel_event: Optional[threading.Event] = None,
-        log_callback: Optional[LogCallback] = None,
-        progress_callback: Optional[ProgressCallback] = None,
-        stats_callback: Optional[StatsCallback] = None,
+        cancel_event: threading.Event | None = None,
+        log_callback: LogCallback | None = None,
+        progress_callback: ProgressCallback | None = None,
+        stats_callback: StatsCallback | None = None,
     ) -> None:
         self.cancel_event = cancel_event or threading.Event()
         self.log = log_callback or _noop_log

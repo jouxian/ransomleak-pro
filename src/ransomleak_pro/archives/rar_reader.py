@@ -4,11 +4,22 @@ from __future__ import annotations
 import io
 import os
 import threading
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional
 
-from ..config import MAX_ARCHIVE_RECURSION_DEPTH, MAX_NESTED_ARCHIVE_SIZE, MAX_NESTED_COMPRESSION_RATIO, NORMAL_MAX_DEPTH
-from ..detection import archive_member_risk, get_filelike_header, get_magic_header, looks_like_archive, magic_to_archive_type
+from ..config import (
+    MAX_ARCHIVE_RECURSION_DEPTH,
+    MAX_NESTED_ARCHIVE_SIZE,
+    MAX_NESTED_COMPRESSION_RATIO,
+    NORMAL_MAX_DEPTH,
+)
+from ..detection import (
+    archive_member_risk,
+    get_filelike_header,
+    get_magic_header,
+    looks_like_archive,
+    magic_to_archive_type,
+)
 from ..models import ArchiveSafetyContext, ArchiveSource, ArchiveYield
 from ..utils import safe_report_text
 from .common import read_stream_limited
@@ -25,8 +36,8 @@ def extract_rar_contents(
     virtual_prefix: str = "",
     depth: int = 0,
     max_depth: int = NORMAL_MAX_DEPTH,
-    safety: Optional[ArchiveSafetyContext] = None,
-    cancel_event: Optional[threading.Event] = None,
+    safety: ArchiveSafetyContext | None = None,
+    cancel_event: threading.Event | None = None,
     aggressive_magic: bool = False,
 ) -> Generator[ArchiveYield, None, None]:
 

@@ -4,9 +4,9 @@ from __future__ import annotations
 import hashlib
 import os
 import tempfile
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional
 
 from .config import APP_TITLE, REPORT_FORMAT_VERSION, SAVE_PROGRESS_EVERY_ROWS
 from .models import ScanOptions, ScanResult
@@ -19,7 +19,7 @@ def write_forensic_report(
     output_path: Path,
     result: ScanResult,
     options: ScanOptions,
-    progress_callback: Optional[ReportProgressCallback] = None,
+    progress_callback: ReportProgressCallback | None = None,
 ) -> str:
     """Write a report atomically and return the SHA-256 of data lines."""
     output_path = Path(output_path)
@@ -33,7 +33,7 @@ def write_forensic_report(
         raise OSError(f"Destination directory does not exist: {parent}")
 
     digest = hashlib.sha256()
-    temporary_path: Optional[Path] = None
+    temporary_path: Path | None = None
     aggressive_magic = options.aggressive_magic or options.deep_mode == "ultra"
 
     try:

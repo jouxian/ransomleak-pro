@@ -2,15 +2,15 @@
 from __future__ import annotations
 
 import threading
-from typing import Optional
 
 from ..models import ArchiveSafetyContext
+
 
 def read_stream_limited(
     stream,
     limit: int,
     cancel_event: threading.Event,
-    safety: Optional[ArchiveSafetyContext] = None,
+    safety: ArchiveSafetyContext | None = None,
 ) -> bytes:
 
     if limit < 0:

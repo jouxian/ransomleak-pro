@@ -4,11 +4,17 @@ from __future__ import annotations
 import io
 import os
 import threading
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional
 
 from ..config import MAX_ARCHIVE_RECURSION_DEPTH, MAX_NESTED_ARCHIVE_SIZE, NORMAL_MAX_DEPTH
-from ..detection import archive_member_risk, get_filelike_header, get_magic_header, looks_like_archive, magic_to_archive_type
+from ..detection import (
+    archive_member_risk,
+    get_filelike_header,
+    get_magic_header,
+    looks_like_archive,
+    magic_to_archive_type,
+)
 from ..models import ArchiveSafetyContext, ArchiveSource, ArchiveYield
 from ..utils import safe_report_text
 
@@ -33,12 +39,12 @@ def read_7z_member_limited(archive, name, safety, cancel_event) -> bytes:
         raise ValueError("unsafe 7z member name")
     try:
         solid = archive.archiveinfo().solid
-    except AssertionError:
+    except AssertionError as exc:
         # py7zr 1.1.3 archiveinfo() asserts on unnamed BytesIO sources.
         # Keep this version-sensitive fallback isolated and fail closed.
         probe = getattr(archive, "_is_solid", None)
         if not callable(probe):
-            raise ValueError("7z backend cannot establish whether stream is solid")
+            raise ValueError("7z backend cannot establish whether stream is solid") from exc
         solid = probe()
     if solid:
         raise ValueError("solid 7z: nested content skipped; metadata remains available")
@@ -104,8 +110,8 @@ def extract_7z_contents(
     virtual_prefix: str = "",
     depth: int = 0,
     max_depth: int = NORMAL_MAX_DEPTH,
-    safety: Optional[ArchiveSafetyContext] = None,
-    cancel_event: Optional[threading.Event] = None,
+    safety: ArchiveSafetyContext | None = None,
+    cancel_event: threading.Event | None = None,
     aggressive_magic: bool = False,
 ) -> Generator[ArchiveYield, None, None]:
 

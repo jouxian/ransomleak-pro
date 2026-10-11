@@ -1,5 +1,5 @@
-from pathlib import Path
 import tomllib
+from pathlib import Path
 
 from ransomleak_pro.config import APP_VERSION
 

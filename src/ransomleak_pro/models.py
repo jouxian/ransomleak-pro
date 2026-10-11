@@ -1,16 +1,15 @@
 """Core data models used by the scan engine and report writer."""
 from __future__ import annotations
 
+import io
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Union
-import io
-import os
 
 from .config import MAX_ARCHIVE_ENTRIES, MAX_NESTED_ARCHIVE_SIZE, MAX_TOTAL_NESTED_READ_BYTES
 
-ArchiveSource = Union[str, os.PathLike, Path, io.BytesIO]
+ArchiveSource = str | os.PathLike | Path | io.BytesIO
 ArchiveYield = tuple[str, int, str]
 
 @dataclass(frozen=True)
@@ -65,7 +64,7 @@ class ScanCounters:
     processed_files: int = 0
     filesystem_changed: bool = False
 
-    def copy(self) -> "ScanCounters":
+    def copy(self) -> ScanCounters:
         return ScanCounters(**vars(self))
 
 @dataclass(frozen=True)

@@ -1,4 +1,10 @@
-from ransomleak_pro.utils import format_eta, format_size, normalize_domain, safe_filename, safe_report_text
+from ransomleak_pro.utils import (
+    format_eta,
+    format_size,
+    normalize_domain,
+    safe_filename,
+    safe_report_text,
+)
 
 
 def test_format_size_and_eta():

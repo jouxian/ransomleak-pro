@@ -1,5 +1,3 @@
-import io
-from pathlib import Path
 
 from ransomleak_pro.detection import archive_member_risk, magic_to_archive_type
 

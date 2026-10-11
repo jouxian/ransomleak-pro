@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import os
 import threading
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Callable, Iterable, Optional
 
 from .models import ScanCounters
 from .utils import safe_report_text
@@ -16,7 +16,7 @@ def iter_files_fast(
     root: Path,
     counters: ScanCounters,
     cancel_event: threading.Event,
-    log_callback: Optional[LogCallback] = None,
+    log_callback: LogCallback | None = None,
 ) -> Iterable[Path]:
     """Yield regular files without following symlinks.
 
