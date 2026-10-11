@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ransomleak-pro"
-version = "9.0.0"
+version = "9.0.1"
 description = "Read-only forensic archive inventory tool for authorized local datasets."
 readme = "README.md"
 requires-python = ">=3.11"

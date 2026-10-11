@@ -1,7 +1,7 @@
 """Application configuration and safety limits."""
 
 APP_NAME = "RansomLeak Pro"
-APP_VERSION = "9.0.0"
+APP_VERSION = "9.0.1"
 APP_RELEASE_LABEL = "Professional Architecture"
 APP_TITLE = f"{APP_NAME} v{APP_VERSION} — {APP_RELEASE_LABEL}"
 
