@@ -1,169 +1,137 @@
 # RansomLeak Pro
 
-**RansomLeak Pro v8.1** is a read-only forensic archive inventory tool designed for authorized analysis of local datasets.
+**RansomLeak Pro v9.0.0** is a read-only forensic archive inventory application for authorized local datasets.
 
-It performs deep inspection of files and archives without extracting archives to disk, modifying source files, uploading data, or transmitting scanned content.
+Version 9 introduces a professional project architecture: the scan engine, archive readers, reporting layer, and desktop interface are separated into testable modules. The desktop interface now uses **PySide6/Qt** instead of a monolithic Tkinter application.
 
-## Features
+## Highlights
 
 - High-performance single-pass filesystem traversal
-- Recursive ZIP, RAR, and 7Z archive inspection
+- Recursive ZIP, RAR, and 7Z inspection
 - Deep nested archive discovery
-- Hidden archive detection using magic bytes
-- File extension and magic-byte mismatch detection
-- Password and encryption detection
-- Split-volume archive awareness
-- Path traversal detection
-- Absolute-path detection
-- Symbolic-link detection
-- Suspicious archive-member detection
-- Compression-ratio screening
-- Bounded nested archive reads
-- Archive entry safety limits
-- Recursive depth limits
+- Hidden archive detection through magic bytes
+- Extension / magic mismatch detection
+- Bounded nested reads and decompression-ratio screening
+- Path traversal, absolute-path, symlink, and special-entry detection
+- Password/encryption and split-volume awareness
+- Atomic TXT forensic reports with SHA-256 data digest
 - Normal, Deep, and Ultra Deep scan modes
-- Real-time scan statistics
-- Live diagnostic logging
-- Scan cancellation support
-- Atomic forensic report creation
-- SHA-256 digest for report data
-- Dark-mode Tkinter interface
-- Fully local and offline processing
+- Modern PySide6 dark desktop interface
+- Cancellation-aware background scanning and report generation
+- Unit tests and GitHub Actions CI
+- Standard `pyproject.toml` packaging
+- MIT License
 
-## Privacy
+## Architecture
 
-RansomLeak Pro is designed for local forensic analysis.
+```text
+src/ransomleak_pro/
+├── config.py       # version, limits, and application configuration
+├── models.py       # dataclasses and shared types
+├── utils.py        # formatting and sanitization helpers
+├── detection.py    # magic-byte and archive-member risk detection
+├── filesystem.py   # read-only filesystem traversal
+├── archives/       # format-specific ZIP/RAR/7Z readers and shared limits
+├── scanner.py      # GUI-independent forensic scan engine
+├── reporting.py    # atomic report writer and SHA-256 digest
+├── gui.py          # PySide6 desktop interface
+└── __main__.py     # application entry point
+```
 
-The application:
-
-- Does not upload scanned files
-- Does not transmit scanned content
-- Does not modify source files
-- Does not extract archives to disk during analysis
-- Processes datasets locally on the user's system
-
-## Authorized Use
-
-This software is intended for legitimate forensic analysis, incident response, archival inspection, research, and other authorized activities.
-
-Only use RansomLeak Pro on systems and datasets that you own or are explicitly authorized to inspect.
+The core scanner and report writer do not depend on the GUI, which makes them easier to test, reuse, and maintain.
 
 ## Requirements
 
-- Python 3
-- Tkinter
-- `rarfile` for RAR support
-- `py7zr` for 7Z support
+- Python 3.11 or newer
+- PySide6
+- `rarfile`
+- `py7zr`
 
-Install the optional Python dependencies with:
+RAR inspection may also require a compatible external backend such as **UnRAR** or **7-Zip** depending on the system configuration.
+
+## Installation
+
+Clone the repository and install it in editable mode:
 
 ```bash
-pip install rarfile py7zr
+python -m pip install -e .
 ```
 
-RAR processing may also require a compatible external backend such as **UnRAR** or **7-Zip**.
+For development tools:
 
-ZIP support is provided by Python's built-in `zipfile` module.
+```bash
+python -m pip install -e ".[dev]"
+```
 
 ## Running
 
-Clone or download the repository, then run:
+After installation:
 
 ```bash
-python ransomleak_pro.py
+ransomleak-pro
 ```
 
-The graphical interface will open.
+or:
 
-Select a local dataset directory, configure the scan options, and start the forensic inventory scan.
+```bash
+python -m ransomleak_pro
+```
 
-## Scan Modes
+The root-level `run_ransomleak_pro.py` file is also included as a convenience launcher for source checkouts.
 
-RansomLeak Pro supports multiple archive recursion levels:
+## Tests
 
-- **Normal** — Standard recursive archive inspection
-- **Deep** — Extended nested archive inspection
-- **Ultra Deep** — Maximum configured recursive depth
+Run the unit tests with:
 
-Deeper scan modes may require more memory and processing time.
+```bash
+python -m pytest
+```
 
-## Archive Formats
+Run the linter with:
 
-### ZIP
+```bash
+python -m ruff check src/ransomleak_pro tests
+```
 
-ZIP support is built into Python and supports recursive archive inspection, nested archive discovery, password detection, and archive-member risk analysis.
+GitHub Actions runs package installation, compilation, and unit tests on Windows and Linux for supported Python versions.
 
-### RAR
+## Privacy and Safety
 
-RAR support is provided through the `rarfile` Python package.
+RansomLeak Pro is designed for local, read-only analysis. It does not upload scanned files, transmit scanned content, modify source files, or extract archive contents into the scanned dataset during normal analysis.
 
-A compatible external extraction backend may be required depending on the operating system and configuration.
-
-### 7Z
-
-7Z support is provided through the `py7zr` package.
-
-Solid 7Z archives may be inventoried at the metadata level without recursively reading nested archive contents.
-
-## Archive Safety Controls
-
-RansomLeak Pro includes safeguards for malformed, suspicious, or resource-intensive archives.
-
-These controls include:
-
-- Maximum nested archive size
-- Total nested-read budget
-- Maximum archive entry count
-- Compression-ratio screening
-- Recursive archive depth limits
-- Path traversal detection
-- Absolute-path detection
-- Symbolic-link detection
-- Suspicious member-name detection
-- Extension and magic-byte mismatch detection
-- Password-protected archive detection
-
-These safeguards reduce the risk of excessive memory use and unsafe recursive archive processing.
-
-## Forensic Reporting
-
-RansomLeak Pro can generate a TXT forensic inventory report containing scan metadata, discovered files, archive contents, warnings, and analysis results.
-
-Reports are written atomically to reduce the risk of incomplete report files.
-
-Each completed report also includes a **SHA-256 digest** of the report data to assist with integrity verification.
-
-## Read-Only Design
-
-RansomLeak Pro is designed as a read-only inventory utility.
-
-During normal operation, it does not:
-
-- Delete files
-- Rename files
-- Modify scanned files
-- Extract archive contents to the scanned directory
-- Upload data to remote services
+Use this software only on systems and datasets that you own or are explicitly authorized to inspect.
 
 ## Limitations
 
-RansomLeak Pro is an archive inventory and metadata inspection utility.
+RansomLeak Pro is an archive inventory and metadata inspection utility. It is not a malware sandbox, antivirus engine, complete archive integrity verifier, immutable filesystem snapshot, or OS-isolated decompression environment.
 
-It is not:
-
-- A malware sandbox
-- An antivirus engine
-- A complete archive integrity verifier
-- An immutable filesystem snapshot
-- A process-isolated decompression sandbox
-- A replacement for dedicated digital forensic suites
-
-Archive metadata parsing and codec allocations are not isolated at the operating-system level.
+Solid 7Z archives may be inventoried without recursively reading nested contents. Archive metadata parsing and codec allocations are not process-isolated.
 
 ## Version
 
-**RansomLeak Pro v8.1 — Hardened Forensic**
+**v9.0.0 — Professional Architecture**
 
 ## License
 
-No license has been selected for this project yet.
+Released under the **MIT License**. See `LICENSE`.
+
+
+## Windows Executable
+
+A standalone Windows GUI executable can be produced with the included build configuration.
+
+On Windows, run:
+
+```text
+build_windows_exe.bat
+```
+
+After the tests and build complete, the portable application is created at:
+
+```text
+dist\RansomLeakPro.exe
+```
+
+Users of the resulting EXE do not need to install Python. See [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) for details.
+
+Tagged builds can also be compiled automatically by the included GitHub Actions Windows workflow and attached to the corresponding GitHub Release.
